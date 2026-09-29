@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package multi;
+
+message Empty {}
+
+message ApiResponse {
+  int32 index = 1;
+  string source = 2;
+  string body = 3;
+  string error = 4;
+}
+
+service MultiService {
+  rpc StreamApis(Empty) returns (stream ApiResponse);
+}

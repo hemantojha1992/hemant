@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+service TravelportService {
+  rpc GetFlightList(SearchRequest) returns (FlightListResponse);
+}
+
+message SearchRequest {
+  string origin = 1;
+  string destination = 2;
+  string departureDate = 3;
+  string returnDate = 4;
+  int32 adult = 5;
+  int32 child = 6;
+  int32 infant = 7;
+}
+
+message FlightListResponse {
+  int32 status = 1;
+  string message = 2;
+  string error = 3;
+  repeated FlightData data = 4;
+}
+
+message FlightData {
+  string provider = 1; 
+  string airline = 2;
+  string flightNumber = 3;
+  string price = 4;
+  string cabin = 5;
+}

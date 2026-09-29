@@ -1,0 +1,62 @@
+{
+  "name": "zipzaver",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "agent"
+  ],
+  "description": "with node",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon --expose-gc server/app.js",
+    "start:dev": "npm run start:agent-dev",
+    "start:agent": "cd agent && node index.js",
+    "start:agent-dev": "nodemon server/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hemantoJha1992/zipzaver.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@graphql-tools/merge": "^9.0.15",
+    "apollo-server": "^3.13.0",
+    "axios": "^1.5.0",
+    "body-parser": "^1.20.2",
+    "circular-json": "^0.5.9",
+    "connect-redis": "^7.1.1",
+    "cors": "^2.8.6",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
+    "firebase-admin": "^13.7.0",
+    "googleapis": "^171.4.0",
+    "graphql": "^16.10.0",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "md5": "^2.3.0",
+    "module-alias": "^2.2.3",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.6.0",
+    "mysql2": "^3.6.1",
+    "nodemailer": "^7.0.10",
+    "pdfkit": "^0.14.0",
+    "puppeteer": "^24.43.1",
+    "qrcode": "^1.5.4",
+    "react-native-incall-manager": "^4.2.1",
+    "react-native-webrtc": "^124.0.5",
+    "redis": "^4.6.12",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.8.1",
+    "uniqid": "^5.4.0",
+    "uuid": "^8.3.2",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
