@@ -6,7 +6,7 @@ Backend API for the zipzaver application.
 
 ```text
 hemant/
-├── agent/
+├── rider/
 ├── gprc/
 ├── library/
 ├── notification/

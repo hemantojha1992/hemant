@@ -9,7 +9,7 @@ moduleAlias.addAliases({
 });
 require('@envConfig');
 require('../shared/constant');
-require('../agent/constant')
+require('../rider/constant')
 
 // const { SessionSchema } = require('./session');
 
@@ -23,14 +23,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(corsObj);
 
-
-const notificationRoutes = require("../notification/controllers/notification.controller");
-app.use("/notification", notificationRoutes);
-
-///////notification route end
-
-const AgentTokenValidate = require('../agent/middleware/validateMiddleware')
-const AgentRoutes = require('../agent/routes');
+const AgentTokenValidate = require('../rider/middleware/validateMiddleware')
+const AgentRoutes = require('../rider/routes');
 //agent route
 app.use('/agent',AgentTokenValidate, AgentRoutes);
 

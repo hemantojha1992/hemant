@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const dbPool = require('../agent/database/db');
+const dbPool = require('../rider/database/db');
 
 class TrainLibrary {
     static async getBookingData(conditions,$offset=0,$limit=12345) {

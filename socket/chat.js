@@ -1,5 +1,5 @@
-// import dbPool from '../agent/database/db';
-const dbPool = require('../agent/database/db');
+// import dbPool from '../rider/database/db';
+const dbPool = require('../rider/database/db');
 
 const activeSessions = {};
 

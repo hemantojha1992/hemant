@@ -11,7 +11,7 @@ const {flightSearchrule} = require('../../utilities/formValidationRule')
 router.get('/search',flightSearchrule,TravelportController.GetFlightList);
 //ended here
   
-// >>>>>>>> 7570253a28bc288677d68ee103e99c56fc892020:agent/controllers/Flight/FlightRoutes.js
+// >>>>>>>> 7570253a28bc288677d68ee103e99c56fc892020:rider/controllers/Flight/FlightRoutes.js
 const FlightControllerInstance = new FlightController();
 router.get('/get_airport_code_list',FlightControllerInstance.getAirPortCodeList);
 router.post('/search',FlightControllerInstance.getFlightList);

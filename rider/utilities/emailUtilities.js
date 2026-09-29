@@ -3,7 +3,7 @@ const { SMTP_OTP_MAIL, SMTP_OTP_PASSWORD, SMTP_MAIL, SMTP_PASSWORD } = process.e
 const fs = require('fs');
 
 // Create a log file
-const logStream = fs.createWriteStream('agent/logs/email_log.txt', { flags: 'a' });
+const logStream = fs.createWriteStream('rider/logs/email_log.txt', { flags: 'a' });
 
 const transporter1 = nodemailer.createTransport({
   service: 'gmail',

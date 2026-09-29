@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "agent"
+    "rider"
   ],
   "description": "with node",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon --expose-gc server/app.js",
     "start:dev": "npm run start:agent-dev",
-    "start:agent": "cd agent && node index.js",
+    "start:agent": "cd rider && node index.js",
     "start:agent-dev": "nodemon server/app.js"
   },
   "repository": {
