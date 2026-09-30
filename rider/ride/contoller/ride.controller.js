@@ -1,12 +1,12 @@
-const FlightService = require('../services/flight.service');
+const RideService = require('../services/ride.service');
 const CustomMessages = require("../../utilities/customMessages");
-let dbPool = require('../../database/db1');
-const FlightModel = require('../models/flight.model');
+let dbPool = require('../../database/db');
+const RideModel = require('../models/ride.model');
 const CustomModel = require('../../models/CustomDbModel');
 const batch = require('../../database/GroupUpdateInsert');
 const { setCacheData, getCacheData } = require("../../../shared/redis/Redis");
 
-class FlightController {
+class RideController {
     async GetAirports(req, res) {
         let status = FAILURE_STATUS;
         let message = CustomMessages.DataNotFound();
@@ -17,14 +17,14 @@ class FlightController {
         let aprtListKey = 'all_airport_list_raw';
         let airportCacheList = await getCacheData(aprtListKey);
         if(!airportCacheList){
-            let getFlightRawList = await FlightModel.get_raw_airport_list();
+            let getFlightRawList = await RideModel.get_raw_airport_list();
             await setCacheData(aprtListKey, getFlightRawList);
         }
 
         let airlineListKey = 'all_airline_list_raw';
         let airlineCacheList = await getCacheData(airlineListKey);
         if(!airlineCacheList){
-            let getAirlineRawList = await FlightModel.get_raw_airline_list();
+            let getAirlineRawList = await RideModel.get_raw_airline_list();
             await setCacheData(airlineListKey, getAirlineRawList);
         }
         let CacheKey =
@@ -47,7 +47,7 @@ class FlightController {
 
         //  Cache empty → fetch from DB
         try {
-            CacheDataGet = await FlightModel.get_airport_list(term);
+            CacheDataGet = await RideModel.get_airport_list(term);
 
             // If DB gives empty array → No Data Found
             if (!CacheDataGet || CacheDataGet.length === 0) {
@@ -121,7 +121,7 @@ class FlightController {
             // =========================
             // DB Call
             // =========================
-            const resData = await FlightModel.get_location_list(
+            const resData = await RideModel.get_location_list(
                 type,
                 search,
                 state_id
@@ -162,7 +162,7 @@ class FlightController {
         res.setHeader("Cache-Control", "no-cache");
         res.setHeader("Connection", "keep-alive");
 
-        FlightService.GetFlightListStream(
+        RideService.GetFlightListStream(
             "Travelport",
             req.body,
             (chunk) => res.write(`data: ${JSON.stringify(chunk)}\n\n`), // push
@@ -173,7 +173,7 @@ class FlightController {
         const searchData = req.body;
         try {
             searchData.user_id = req.user?.user_id || 0;
-            const flights = await FlightService.GetFlightList('Travelport', searchData);
+            const flights = await RideService.GetFlightList('Travelport', searchData);
             res.send(flights);
 
         } catch (err) {
@@ -201,7 +201,7 @@ class FlightController {
         //res.write(`data: ${JSON.stringify({ status: 1, message: "Flight search started...", data: [] })}\n\n`);
 
         try {
-            await FlightService.GetFlightListWithSSE('Travelport', searchData, (providerData) => {
+            await RideService.GetFlightListWithSSE('Travelport', searchData, (providerData) => {
                 // Update cumulativeResults with new flights
                 cumulativeResults.length = 0; // clear previous
                 cumulativeResults.push(...providerData.cumulativeData);
@@ -239,7 +239,7 @@ class FlightController {
             try {
 
                 // API/DB से fare rule fetch करो
-                CacheDataGet = await FlightModel.get_fare_rule(fare_type);
+                CacheDataGet = await RideModel.get_fare_rule(fare_type);
 
                 // 7 days cache
                 await setCacheData(CacheKey, CacheDataGet, 604800);
@@ -264,7 +264,7 @@ class FlightController {
         const searchData = req.body;
         searchData.user_id = req.user?.user_id || null;
         try {
-            const flights = await FlightService.airPrice('Travelport', searchData);
+            const flights = await RideService.airPrice('Travelport', searchData);
             res.send(flights);
         } catch (err) {
             res.write(`data: ${JSON.stringify({
@@ -279,7 +279,7 @@ class FlightController {
     async ReBooking(req, res) {
         const searchData = req.body;
         try {
-            const flights = await FlightService.ReBooking('Travelport', searchData);
+            const flights = await RideService.ReBooking('Travelport', searchData);
             res.send(flights);
         } catch (err) {
             res.write(`data: ${JSON.stringify({
@@ -295,7 +295,7 @@ class FlightController {
         const searchData = req.body;
         searchData.user_id = req.user?.user_id || null;
         try {
-            const flights = await FlightService.GetOptionalServices('Travelport', searchData);
+            const flights = await RideService.GetOptionalServices('Travelport', searchData);
             res.send(flights);
         } catch (err) {
             res.write(`data: ${JSON.stringify({
@@ -310,7 +310,7 @@ class FlightController {
         const postData = req.body;
         postData.user_id = req.user?.user_id || null;
         try {
-            const flights = await FlightService.CreateReservation('Travelport', postData);
+            const flights = await RideService.CreateReservation('Travelport', postData);
             res.send(flights);
 
         } catch (err) {
@@ -327,7 +327,7 @@ class FlightController {
         const postData = req.body;
         postData.user_id = req.user?.user_id || null;
         try {
-            const flights = await FlightService.HoldToConfirm('Travelport', postData);
+            const flights = await RideService.HoldToConfirm('Travelport', postData);
             res.send(flights);
 
         } catch (err) {
@@ -344,7 +344,7 @@ class FlightController {
         const postData = req.body;
         postData.user_id = req.user?.user_id || null;
         try {
-            const flights = await FlightService.GetHoldBookingDetail('Travelport', postData);
+            const flights = await RideService.GetHoldBookingDetail('Travelport', postData);
             res.send(flights);
 
         } catch (err) {
@@ -361,7 +361,7 @@ class FlightController {
         const postData = req.body;
         postData.user_id = req.user?.user_id || null;
         try {
-            const flights = await FlightService.unprocessTicket('Travelport', postData);
+            const flights = await RideService.unprocessTicket('Travelport', postData);
             res.send(flights);
 
         } catch (err) {
@@ -392,13 +392,13 @@ class FlightController {
             }
 
             // DB Call
-            const DataGet = await FlightModel.get_RetriveData(appRef);
+            const DataGet = await RideModel.get_RetriveData(appRef);
 
             if (DataGet && DataGet.result.length > 0) {
                 status = SUCCESS_STATUS;
                 message = CustomMessages.successResponse();
             }
-            const resultData = await FlightService.RetriveReservation('Travelport', DataGet.result);
+            const resultData = await RideService.RetriveReservation('Travelport', DataGet.result);
             res.send(resultData);
 
         } catch (error) {
@@ -416,7 +416,7 @@ class FlightController {
     async book(req, res) {
         const { provider, bookingData } = req.body;
         // try {
-        //     const result = await FlightService.book(provider, bookingData);
+        //     const result = await RideService.book(provider, bookingData);
         //     res.json({ success: true, data: result });
         // } catch (err) {
         //     res.status(500).json({ success: false, message: err.message });
@@ -436,7 +436,7 @@ class FlightController {
                 });
             }
 
-            const flight = await FlightService.getFlightById(id);
+            const flight = await RideService.getFlightById(id);
 
             if (!flight) {
                 return res.status(404).json({
@@ -453,7 +453,7 @@ class FlightController {
     }
     async getAll(req, res) {
         try {
-            const flights = await FlightService.getAllFlights();
+            const flights = await RideService.getAllFlights();
             res.json({ success: true, data: flights });
         } catch (err) {
             res.status(500).json({ success: false, message: err.message });
@@ -464,7 +464,7 @@ class FlightController {
         const searchData = req.body;
         searchData.user_id = req.user?.user_id || null;
         try {
-            const flights = await FlightService.rePrice('Travelport', searchData);
+            const flights = await RideService.rePrice('Travelport', searchData);
             res.send(flights);
         } catch (err) {
             res.status(500).json({ success: false, message: err.message });
@@ -484,7 +484,7 @@ class FlightController {
         }
         try {
             connection = await dbPool.getConnection();
-            const reportData = await FlightModel.GetFlightBookingData(connection, agentId, params);
+            const reportData = await RideModel.GetFlightBookingData(connection, agentId, params);
             if (reportData && reportData.status) {
                 return res.status(200).json({
                     status: 1,
@@ -515,7 +515,7 @@ class FlightController {
         let connection;
         try {
             connection = await dbPool.getConnection();
-            let getCancelData = await FlightModel.GetCancelViewDetails(req?.query?.app_reference);
+            let getCancelData = await RideModel.GetCancelViewDetails(req?.query?.app_reference);
             if (!getCancelData || getCancelData.status != 1) {
                 let err = new Error(getCancelData.msg || 'Data Not Found!');
                 err.statusCode = '500';
@@ -553,7 +553,7 @@ class FlightController {
             }
             connection = await dbPool.getConnection();
             const provider = postData.provider || 'Travelport';
-            const result = await FlightService.cancelFlightBooking(connection, provider, postData);
+            const result = await RideService.cancelFlightBooking(connection, provider, postData);
             return res.status(result.statusCode || 200).json({
                 status: result.status,
                 message: result.message,
@@ -577,7 +577,7 @@ class FlightController {
             const postData = req.body;
             postData.user_id = req.user?.user_id || null;
             const user_id = req.user?.user_id || null;
-            let userData = await FlightModel.get_user_detail(user_id);
+            let userData = await RideModel.get_user_detail(user_id);
             const reporting_to_id = userData.reporting_to_id;
             let app_reference = postData.app_reference;
             if (!app_reference) {
@@ -591,7 +591,7 @@ class FlightController {
             const provider = postData.provider || 'Travelport';
 
             const condition = `app_reference='${app_reference}'`;
-            const cancelDetail = await FlightModel.selectData('flight_booking_cancellation_details',condition,'*');
+            const cancelDetail = await RideModel.selectData('flight_booking_cancellation_details',condition,'*');
             if (!cancelDetail || !cancelDetail.result || cancelDetail.result.length === 0){
                 throw {
                     status: 0,
@@ -602,7 +602,7 @@ class FlightController {
             const cancelData = cancelDetail.result[0];
             const total_refund_amount = cancelData.refund_amount_by_admin;
 
-            const getRefundQuoteArr = await FlightService.FinalCancelFlightBooking(connection, provider, postData);
+            const getRefundQuoteArr = await RideService.FinalCancelFlightBooking(connection, provider, postData);
             if (getRefundQuoteArr && getRefundQuoteArr.status) {
                 let refund_status = '0';
                 let cancelStatus = getRefundQuoteArr.data.api_refund_status;
@@ -616,13 +616,13 @@ class FlightController {
                     updated_at: new Date()
                 };
                 const fbC = `app_reference='${app_reference}'`;
-                const fbdDetail = await FlightModel.selectData( 'flight_booking_details',fbC,'*');
+                const fbdDetail = await RideModel.selectData( 'flight_booking_details',fbC,'*');
                 const booking_detail = fbdDetail.result[0];
                 // Dist DI
-                let dist_balance = await FlightModel.getDistributorBalance(reporting_to_id);
+                let dist_balance = await RideModel.getDistributorBalance(reporting_to_id);
                 // const condition = `app_reference='${app_reference}' AND transaction_type='user_di'`;
-                // const transactionLogs = await FlightModel.selectData( 'transaction_log',condition,'*');
-                // const disDIStatus = await FlightModel.checkDistDiStatus( reporting_to_id);
+                // const transactionLogs = await RideModel.selectData( 'transaction_log',condition,'*');
+                // const disDIStatus = await RideModel.checkDistDiStatus( reporting_to_id);
                 //const getTransLogDI = transactionLogs?.result[0] || {};
                 if (booking_detail?.dist_segment_incentive && parseFloat(booking_detail.dist_segment_incentive) > 0) {
                     const getDistDi = parseFloat(booking_detail.dist_segment_incentive);
@@ -633,7 +633,7 @@ class FlightController {
                         slgD = 'Credit';
                     }
                     const distLogs_DI = {
-                        system_transaction_id: await FlightModel.generateAppTransactionReference(),
+                        system_transaction_id: await RideModel.generateAppTransactionReference(),
                         transaction_type: 'flight',
                         opening_balance: parseFloat(dist_balance),
                         closing_balance: parseFloat(distClosingDIBalance),
@@ -648,15 +648,15 @@ class FlightController {
                     };
                     if (distLogs_DI) {
                         // Deduct amount from wallet
-                        const rr = await FlightModel.modifyUserBalance("dist",reporting_to_id,-getDistDi);
+                        const rr = await RideModel.modifyUserBalance("dist",reporting_to_id,-getDistDi);
                         // Save transaction log
-                        await FlightModel.insertData('transaction_log',distLogs_DI);
+                        await RideModel.insertData('transaction_log',distLogs_DI);
                     }
                 }
                 // Dist DI
 
                 // Dist Markup 
-                let distBalanceN = await FlightModel.getDistributorBalance(reporting_to_id);
+                let distBalanceN = await RideModel.getDistributorBalance(reporting_to_id);
                 if (booking_detail?.dist_markup) {
                     const distMarkupVal = parseFloat(booking_detail.dist_markup);
                     const distClosingDIBalance =
@@ -666,7 +666,7 @@ class FlightController {
                         slgM = 'Credit';
                     }
                     const distLogs_Markup = {
-                        system_transaction_id: await FlightModel.generateAppTransactionReference(),
+                        system_transaction_id: await RideModel.generateAppTransactionReference(),
                         transaction_type: 'flight',
                         opening_balance: parseFloat(distBalanceN),
                         closing_balance: parseFloat(distClosingDIBalance),
@@ -681,18 +681,18 @@ class FlightController {
                     };
                     if (distLogs_Markup) {
                         // Deduct amount from wallet
-                        await FlightModel.modifyUserBalance("dist",reporting_to_id,-distMarkupVal);
+                        await RideModel.modifyUserBalance("dist",reporting_to_id,-distMarkupVal);
                         // Save transaction log
-                        await FlightModel.insertData('transaction_log',distLogs_Markup);
+                        await RideModel.insertData('transaction_log',distLogs_Markup);
                     
                     }
                 }
                 // Dist Markup 
                 const FBTDcondition = `app_reference='${app_reference}'`;
-                const one = await FlightModel.updateData("flight_booking_cancellation_details", updateCancelData, FBTDcondition);
-                const one1 = await FlightModel.modifyUserBalance("b2b",user_id,total_refund_amount);
-                const one2 = await FlightModel.updateTransactionPaymentStatus('flight',app_reference,"paid",total_refund_amount);
-                //await FlightModel.saveTransactionDetails('flight_cancel', app_reference, total_refund_amount, 0, 0, 'Flight Refund', user_id, false, 'INR', 1);
+                const one = await RideModel.updateData("flight_booking_cancellation_details", updateCancelData, FBTDcondition);
+                const one1 = await RideModel.modifyUserBalance("b2b",user_id,total_refund_amount);
+                const one2 = await RideModel.updateTransactionPaymentStatus('flight',app_reference,"paid",total_refund_amount);
+                //await RideModel.saveTransactionDetails('flight_cancel', app_reference, total_refund_amount, 0, 0, 'Flight Refund', user_id, false, 'INR', 1);
                 
                 return res.send({
                     status: SUCCESS_STATUS,
@@ -720,7 +720,7 @@ class FlightController {
             const postData = req.query;
             postData.user_id = req.user?.user_id || null;
             connection = await dbPool.getConnection();
-            let getRefundData = await FlightModel.GetBookingRefund(connection,postData);
+            let getRefundData = await RideModel.GetBookingRefund(connection,postData);
             
             
             // return res.status(200).json({
@@ -746,7 +746,7 @@ class FlightController {
             const postData = req.query;
             postData.user_id = req.user?.user_id || null;
             connection = await dbPool.getConnection();
-            let getRefundData = await FlightModel.getRefundReceipt(connection,postData);
+            let getRefundData = await RideModel.getRefundReceipt(connection,postData);
             return res.send(getRefundData);
         } catch (error) {
             console.error("Refund Flight Booking View Error:", error);
@@ -808,7 +808,7 @@ class FlightController {
             const trainData = Array.isArray(Ticket.train) ? Ticket.train[0] : Ticket.train;
             const passengerData = Ticket.passenger || [];
             try {
-                await FlightService.generateTicketPDF(req.query,doc, trainData, passengerData);
+                await RideService.generateTicketPDF(req.query,doc, trainData, passengerData);
             } catch (pdfError) {
                 console.error('PDF Generation Error:', pdfError);
                 // If PDF generation fails, send error in doc
@@ -837,4 +837,4 @@ class FlightController {
     }
 }
 
-module.exports = new FlightController(); 
+module.exports = new RideController(); 

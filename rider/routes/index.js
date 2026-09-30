@@ -1,12 +1,12 @@
 const express = require('express');
 
 const AgentRoutes = require('../profile/routes');
-const FlightRoute = require('../flight/routes');
+const RideRoute = require('../ride/routes');
 
 
 const router = express.Router();
 router.use(AgentRoutes);
-router.use('/flight',FlightRoute);
+router.use('/ride',RideRoute);
 
 
 module.exports = router;

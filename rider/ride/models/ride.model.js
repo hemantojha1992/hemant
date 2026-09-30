@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const { setCacheData, getCacheData } = require('../../../shared/redis/Redis');
 
 
-class flightModel {
+class rideModel {
 
     static async get_raw_airport_list() {
 
@@ -3072,4 +3072,4 @@ class flightModel {
 
 }
 
-module.exports = flightModel;
+module.exports = rideModel;

@@ -12,13 +12,7 @@ const transporter1 = nodemailer.createTransport({
     pass: SMTP_OTP_PASSWORD,
   },
 });
-// const transporter2 = noder.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: SMTP_MAIL,
-//     pass: SMTP_PASSWORD,
-//   },
-// });
+
 
 function logEmailSuccess(message) {
   const logMessage = `[SUCCESS] - ${new Date().toISOString()} - ${message}\n`;

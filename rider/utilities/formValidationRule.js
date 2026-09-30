@@ -7,12 +7,9 @@ const Joi = require('joi');
 class FormValidationRule { 
     static loginValidationRule() {
         return [
-            // check('username').isLength({ min: 5 }).withMessage(CustomMessages.usernameIsLength(5)),
             check('email')
                 .notEmpty().withMessage(CustomMessages.emailNotEmpty)
-                .isEmail().withMessage(CustomMessages.emailIsEmail),
-            // check('password').isLength({ min: 6 }).withMessage(CustomMessages.passwordIsLength(6)),
-        ]
+                .isEmail().withMessage(CustomMessages.emailIsEmail),]
     } 
     static registerValidationRule() {
         return check('name').notEmpty()
@@ -65,55 +62,6 @@ class FormValidationRule {
             const validationErrors = validationResult.error.details.map(error => error.message);
             // console.error('Validation errors:', validationErrors);
             return res.status(422).json({ status: 0, errors: validationErrors, message: validationErrors });
-        } else {
-            next()
-        }
-    }
-    static flightSearchrule(req, res, next) {
-        const flightSearchSchema = Joi.object({
-            from: Joi.string().required().min(3).messages({
-                'string.base': CustomMessages.paramRequire('From Airport'),
-                'string.empty': CustomMessages.paramRequire('From Airport'),
-                'any.required': CustomMessages.paramRequire('From Airport'),
-            }),
-            to: Joi.string().required().min(3).messages({
-                'string.base': CustomMessages.paramRequire('To Airport'),
-                'string.empty': CustomMessages.paramRequire('To Airport'),
-                'any.required': CustomMessages.paramRequire('To Airport'),
-            }),
-            departure: Joi.date().required().iso().messages({
-                'date.base': CustomMessages.paramRequire('Departure Date (YYYY-MM-DD)'),
-                'date.format': CustomMessages.paramRequire('Departure Date must be in YYYY-MM-DD format'),
-                'any.required': CustomMessages.paramRequire('Departure Date'),
-            }),
-            return: Joi.date().iso().optional().messages({
-                'date.base': CustomMessages.paramRequire('Return Date (YYYY-MM-DD)'),
-                'date.format': ('Return Date must be in YYYY-MM-DD format'),
-            }),
-            adult: Joi.number().integer().min(1).max(9).required().messages({
-                'number.base': CustomMessages.paramRequire('Adult (1-9)'),
-                'number.min': CustomMessages.paramRequire('Minimum 1 Adult Required'),
-                'number.max': ('Maximum 9 Adults Allowed'),
-                'any.required': CustomMessages.paramRequire('Adult '),
-            }),
-            child: Joi.number().integer().min(1).max(9).optional().messages({
-                'number.base': CustomMessages.paramRequire('Child (1-9)'),
-                'number.min': ('Minimum 1 Child Required'),
-                'number.max': ('Maximum 9 Children Allowed'),
-            }),
-            infant: Joi.number().integer().min(1).max(9).optional().messages({
-                'number.base': CustomMessages.paramRequire('Infant (1-9)'),
-                'number.min': ('Minimum 1 Infant Required'),
-                'number.max': ('Maximum 9 Infants Allowed'),
-            }),
-        });
-        const options = {
-            abortEarly: false,
-        }
-        const validationResult = flightSearchSchema.validate(req.query, options);
-        if (validationResult.error) {
-            const validationErrors = validationResult.error.details.map(error => error.message);
-            return res.status(422).json({ status: 0, errors: validationErrors, message: CustomMessages.validationErr() });
         } else {
             next()
         }
